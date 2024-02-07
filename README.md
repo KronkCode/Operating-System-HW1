@@ -7,7 +7,6 @@ This repository contains Python code implementing a preemptive Shortest Job Firs
 - [Introduction](#introduction)
 - [Features](#features)
 - [Requirements](#requirements)
-- [Usage](#usage)
 - [SJF Algorithm Steps](#sjf-algorithm-steps)
 - [License](#license)
 
@@ -25,10 +24,6 @@ The code simulates the execution of processes in a preemptive SJF scheduling env
 ## Requirements
 
 - Python 3.x (I used Ubuntu)
-
-## Usage
-
-1. Clone this repository to your local machine:
 
 ## SJF Algorithm Steps
 Initialization: Initialize current time and other variables.
