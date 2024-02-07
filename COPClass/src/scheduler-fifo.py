@@ -73,6 +73,10 @@ def main():
                 else:
                     idle = False
 
+                # Print the output to the console
+                print_output = f"Time {time_ticks} : {current_process.name} selected (burst {current_process.burst_time})" if current_process else f"Time {time_ticks} : Idle"
+                print(print_output)
+
     print(f"Output written to {output_filename}")
 
 if __name__ == "__main__":
