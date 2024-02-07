@@ -31,5 +31,8 @@ The code simulates the execution of processes in a preemptive SJF scheduling env
 
 1. Clone this repository to your local machine:
 
+
+##File Structure
+
 ```bash
 git clone https://github.com/your_username/shortest-job-first-scheduling.git
