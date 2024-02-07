@@ -9,7 +9,6 @@ This repository contains Python code implementing a preemptive Shortest Job Firs
 - [Requirements](#requirements)
 - [Usage](#usage)
 - [SJF Algorithm Steps](#sjf-algorithm-steps)
-- [File Structure](#file-structure)
 - [License](#license)
 
 ## Introduction
@@ -31,8 +30,13 @@ The code simulates the execution of processes in a preemptive SJF scheduling env
 
 1. Clone this repository to your local machine:
 
+## SJF Algorithm Steps
+Initialization: Initialize current time and other variables.
+Process Arrival: Check for newly arrived processes.
+Process Completion: If there is a current process and it's finished, mark it as completed.
+Select Next Process: Select the next process if none is running.
+Idle Check: If there are no processes or the CPU is idle, print "Idle".
+Preemption: If there's a process with a shorter burst, preempt the current process.
+Execution: Increment current time and decrement burst of the current process.
+Completion: Repeat steps 2-7 until all processes are completed.
 
-##File Structure
-
-```bash
-git clone https://github.com/your_username/shortest-job-first-scheduling.git
