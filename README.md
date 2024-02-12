@@ -35,11 +35,10 @@ The code simulates the execution of processes in a preemptive SJF scheduling env
   - Execution: Increment current time and decrement burst of the current process.
   - Completion: Repeat steps 2-7 until all processes are completed.
 
-## Promblem With SJF_Function.py
+## SJF_Function.py Check
   - c2-sjf.in WORKS
   - Webcourses example WORKS
-    
-  - c10-sjf.in WRONG
-  - c5-sjf.in WRONG
+  - c10-sjf.in WORKS
+  - c5-sjf.in WORKS
 
   For some reason there is a promblme only when its a process that need to be replaced before finishing since there is a shorter process that arrived
