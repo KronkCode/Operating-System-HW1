@@ -40,5 +40,3 @@ The code simulates the execution of processes in a preemptive SJF scheduling env
   - Webcourses example WORKS
   - c10-sjf.in WORKS
   - c5-sjf.in WORKS
-
-  For some reason there is a promblme only when its a process that need to be replaced before finishing since there is a shorter process that arrived
