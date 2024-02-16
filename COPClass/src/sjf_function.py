@@ -12,9 +12,6 @@ class Process:
         self.response_time = 0
         self.start_time = -1
 
-    # Update wait time of a process
-    def update_wait_time(self, current_time):
-        self.wait_time = max(0, current_time - self.arrival)
 
     # Update turnaround time of a process
     def update_turnaround_time(self, current_time):
@@ -38,7 +35,7 @@ def shortest_job_first(processes, run_for):
     finished_processes = []
     current_process = None
 
-    while current_time < run_for:
+    while current_time < run_for or current_process is not None:
         # Check for newly arrived processes
         for process in remaining_processes:
             if process.arrival == current_time:
@@ -60,21 +57,26 @@ def shortest_job_first(processes, run_for):
         if current_process is None and eligible_processes:
             next_process = eligible_processes[0]
             current_process = eligible_processes.pop(0)
-            current_process.update_wait_time(current_time)
             current_process.update_response_time(current_time)
             current_process.start_time = current_time
             print(f"Time {current_time}: {current_process.name} selected (burst: {current_process.burst})")
 
-        # If there are no processes, print idle
-        if not remaining_processes or current_process is None:
-            print(f"Time {current_time}: Idle")
-
         # If there's a process with shorter burst, preempt the current process
-        if current_process is not None and eligible_processes and eligible_processes[0].burst < current_process.burst:
+        elif current_process is not None and eligible_processes and eligible_processes[0].burst < current_process.burst:
             next_process = eligible_processes[0]
             print(f"Time {current_time}: {next_process.name} selected (burst: {next_process.burst})")
             eligible_processes.append(current_process)
             current_process = eligible_processes.pop(0)
+            current_process.wait_time = 0  # Reset wait time when preempted
+
+        # Increment wait time for all eligible processes
+        for process in eligible_processes:
+            if process != current_process:
+                process.wait_time += 1
+
+        # If there are no processes, print idle
+        if not remaining_processes or current_process is None:
+            print(f"Time {current_time}: Idle")
 
         # Increment current time and decrement burst of current process
         current_time += 1
@@ -86,6 +88,7 @@ def shortest_job_first(processes, run_for):
     # Print wait time, turnaround time, and response time for each process
     for process in processes:
         print(f"{process.name} wait {process.wait_time} turnaround {process.turnaround_time} response {process.response_time}")
+
 
 # Read input from a file and parse it
 def read_input_file(file_path):
