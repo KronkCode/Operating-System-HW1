@@ -26,13 +26,13 @@ def fifo_scheduling(processes, run_for):
     print(f"{len(processes)} processes")
     print("Using First-Come First-Served")
     current_time = 0
-    #processes.sort(key=lambda x: x.arrival)  # Ensure processes are sorted by arrival time
+    processes.sort(key=lambda x: x.arrival)  # Ensure processes are sorted by arrival time
 
     while current_time < run_for:
         # Find the next process that has arrived and not yet finished
         next_process = None
         for process in processes:
-            if process.arrival <= current_time and process.burst == -1:
+            if process.arrival <= current_time and process.burst > 0:
                 next_process = process
                 break
 
@@ -55,6 +55,7 @@ def fifo_scheduling(processes, run_for):
     for process in processes:
         wait_time = process.start_time - process.arrival if process.start_time != -1 else 0
         print(f"{process.name} wait  {wait_time} turnaround  {process.turnaround_time} response  {process.response_time}")
+
 
 
 # Define the Shortest Job First (SJF) scheduling function
@@ -173,14 +174,14 @@ def print_input(process_count, run_for, algorithm, processes):
 def main():
     # Define the directory path
     directory = 'COPClass/InputFiles'
-    
+   
     # Create the directory if it doesn't exist
     if not os.path.exists(directory):
         os.makedirs(directory)
         print("Directory 'InputFiles' created.")
 
     # Define the file path
-    file_path = os.path.join(directory, 'c10-fcfs.in')
+    file_path = os.path.join(directory, 'c2-fcfs.in')
     
     # Read the input file
     process_count, run_for, algorithm, processes = read_input_file(file_path)
