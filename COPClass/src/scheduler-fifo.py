@@ -1,83 +1,79 @@
 import sys
-import re
+from collections import deque
+# FCFS Scheduling Algorithm
 
-class Process:
-    def __init__(self, name, arrival_time, burst_time):
-        self.name = name
-        self.arrival_time = arrival_time
-        self.burst_time = burst_time
-        self.wait_time = 0
-        self.turnaround_time = 0
-        self.response_time = -1
+# Read input from the user
+input_filename = sys.argv[1]
 
-def main():
-    if len(sys.argv) != 2 or not sys.argv[1].endswith('.in'):
-        print("Usage: python scheduler-gpt.py inputFile.in")
-        sys.exit(1)
+# Read input from the file
+with open(input_filename, "r") as file:
+    lines = file.readlines()
 
-    input_filename = sys.argv[1]
-    output_filename = input_filename.replace('.in', '.out')
+# Parse input
+process_count = int(lines[0].split()[1])
+run_for = int(lines[1].split()[1])
+algorithm = lines[2].split()[1]
 
-    processes = []
-    time_ticks = 0
-    current_process = None
-    remaining_burst_time = 0
-    idle = False
+processes = {}
+for line in lines[3:-1]:
+    tokens = line.split()
+    process_name = tokens[2]
+    arrival_time = int(tokens[4])
+    burst_time = int(tokens[6])
+    processes[process_name] = (arrival_time, burst_time)
 
-    with open(input_filename, 'r') as input_file:
-        lines = [line.strip() for line in input_file.readlines() if not line.startswith('#')]
+# Sort processes based on arrival time
+sorted_processes = sorted(processes.items(), key=lambda item: item[1][0])
 
-        process_count = int(re.search(r'\d+', lines[0].split("#")[0]).group())
-        runtime_value = int(lines[1].split("#")[0].split()[1])
+# Initialize variables
+current_time = 0
+output_lines = []
+waiting_times = []
+turnaround_times = []
+queue = deque()
+all_processes = sorted_processes.copy()  # Keep a copy of all processes
 
-        for line in lines[2:]:
-            if line.startswith("process name"):
-                parts = line.split()
-                name = parts[3]
-                arrival_match = re.search(r'\d+', line)
-                burst_match = re.search(r'\d+', line)
+# Simulate scheduling
+while current_time < run_for:
+    # Add arrived processes to the queue
+    while sorted_processes and sorted_processes[0][1][0] <= current_time:
+        queue.append(sorted_processes.pop(0))
+    
+    # If no process is running and the queue is empty, advance time
+    if not queue:
+        output_lines.append(f"Time {current_time} : Idle")
+        current_time += 1
+        continue
 
-                if arrival_match and burst_match:
-                    arrival_time = int(arrival_match.group())
-                    burst_time = int(burst_match.group())
-                    processes.append(Process(name, arrival_time, burst_time))
-                else:
-                    print("Error: Unable to extract arrival or burst time from the input line.")
-                    sys.exit(1)
+    # Get the next process from the queue
+    process_name, (arrival_time, burst_time) = queue.popleft()
+    
+    output_lines.append(f"Time {current_time} : {process_name} arrived")
+    output_lines.append(f"Time {current_time} : {process_name} selected (burst {burst_time})")
+    
+    # Calculate waiting time and turnaround time
+    waiting_time = max(0, current_time - arrival_time)
+    waiting_times.append(waiting_time)
+    current_time += burst_time
+    turnaround_times.append(current_time - arrival_time)
+    
+    output_lines.append(f"Time {current_time} : {process_name} finished")
 
-        with open(output_filename, 'w') as output_file:
-            output_file.write(f"{process_count} processes\nUsing FCFS\n")
+# Handle remaining idle time
+while current_time < run_for:
+    output_lines.append(f"Time {current_time} : Idle")
+    current_time += 1
 
-            while time_ticks <= runtime_value or current_process or processes:
-                if current_process is None and processes:
-                    current_process = processes.pop(0)
-                    current_process.response_time = time_ticks
+# Print the output
+output_lines.insert(0, f"{process_count} processes")
+output_lines.insert(1, f"Using First-Come First-Served")
+output_lines.append(f"Finished at time {current_time}\n")
+for i, (process_name, _) in enumerate(all_processes):  # Use all_processes here
+    output_lines.append(f"{process_name} wait {waiting_times[i]} turnaround {turnaround_times[i]} response 0")
 
-                if current_process:
-                    remaining_burst_time -= 1
-                    output_file.write(f"Time {time_ticks} : {current_process.name} selected (burst {current_process.burst_time})\n")
-                    current_process.burst_time -= 1
+# Write output to a file
+output_filename = input_filename.replace(".in", ".out")
+with open(output_filename, "w") as output_file:
+    output_file.write("\n".join(output_lines))
 
-                    if current_process.burst_time == 0:
-                        current_process.turnaround_time = time_ticks - current_process.arrival_time
-                        current_process.wait_time = current_process.turnaround_time - current_process.response_time
-                        output_file.write(f"Time {time_ticks} : {current_process.name} finished\n")
-                        current_process = None
-                        remaining_burst_time = 0
-                else:
-                    output_file.write(f"Time {time_ticks} : Idle\n")
-                    idle = True
-
-                if not idle:
-                    time_ticks += 1
-                else:
-                    idle = False
-
-                # Print the output to the console
-                print_output = f"Time {time_ticks} : {current_process.name} selected (burst {current_process.burst_time})" if current_process else f"Time {time_ticks} : Idle"
-                print(print_output)
-
-    print(f"Output written to {output_filename}")
-
-if __name__ == "__main__":
-    main()
+print(f"Output written to {output_filename}")
