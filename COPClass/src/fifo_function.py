@@ -8,19 +8,17 @@ class Process:
         self.burst = burst
         self.wait_time = 0
         self.turnaround_time = 0
-        self.response_time = 0
-        self.start_time = -1
+        self.response_time = -1  # Initialize to -1, will be updated when process starts
+        self.start_time = -1  # Initialize to -1, will be updated when process starts
 
-    
-    # Update turnaround time of a process
-    def update_turnaround_time(self, current_time):
-        self.turnaround_time = current_time - self.arrival
 
-    # Update response time of a process
     def update_response_time(self, current_time):
-        if self.response_time == 0:
+        if self.response_time == -1:
             self.response_time = current_time - self.arrival
 
+    def update_turnaround_time(self, current_time):
+        self.turnaround_time = current_time - self.arrival
+  
   
 def first_in_first_out(processes, run_for):
     num_processes = len(processes)
@@ -72,6 +70,7 @@ def first_in_first_out(processes, run_for):
     for process in processes:
         wait_time = process.start_time - process.arrival if process.start_time != -1 else 2
         print(f"{process.name} wait {wait_time} turnaround {process.turnaround_time} response {process.response_time}")
+
 
 
 # Define the Shortest Job First (SJF) scheduling function
@@ -189,15 +188,15 @@ def print_input(process_count, run_for, algorithm, processes):
 
 def main():
     # Define the directory path
-    # directory = 'COPClass/InputFiles'
-    directory = '/Users/abdullahalhinai/Desktop/python_learning/Operating-System-HW1/COPClass/InputFiles'
+    directory = 'COPClass/InputFiles'
+   
     # Create the directory if it doesn't exist
     if not os.path.exists(directory):
         os.makedirs(directory)
         print("Directory 'InputFiles' created.")
 
     # Define the file path
-    file_path = os.path.join(directory, 'c10-fcfs.in')
+    file_path = os.path.join(directory, 'c5-fcfs.in')
     
     # Read the input file
     process_count, run_for, algorithm, processes = read_input_file(file_path)
@@ -207,7 +206,7 @@ def main():
     if algorithm == "sjf":
         shortest_job_first(processes, run_for)
     elif algorithm == "fcfs":
-        fifo_scheduling(processes, run_for)
+        first_in_first_out(processes, run_for)
     else:
         print(f"Error: Algorithm {algorithm} not supported.")
     
